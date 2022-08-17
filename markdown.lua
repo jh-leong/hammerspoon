@@ -1,6 +1,16 @@
+-- * code from: https://github.com/jasonrudolph/keyboard/blob/main/hammerspoon/markdown.lua
+
 function inputContent(text)
     hs.pasteboard.setContents(text)
     keyUpDown('cmd', 'v')
+end
+
+function delayKeyUpDownLeftArrow(triggerCount)
+    hs.timer.doAfter(0.01, function()
+        for i = triggerCount, 1, -1 do
+            keyUpDown('', 'left')
+        end
+    end)
 end
 
 function wrapSelectedText(wrapCharacters)
@@ -10,15 +20,13 @@ function wrapSelectedText(wrapCharacters)
     local focusedElement = hs.uielement.focusedElement()
     local selectedText = focusedElement and focusedElement:selectedText() or ''
 
+    -- todo
+    -- some app can not get focusedElement and selectedText
+    -- such as some Elactron app, like Vscode/Obsidan
+    -- here do that for workaround
     if (focusedElement == nil or selectedText == '') then
         inputContent(wrapCharacters .. '' .. wrapCharacters)
-
-        hs.timer.doAfter(0.01, function()
-            local len = #wrapCharacters
-            for i = len, 1, -1 do
-                keyUpDown('', 'left')
-            end
-        end)
+        delayKeyUpDownLeftArrow(#wrapCharacters)
     else
         inputContent(wrapCharacters .. selectedText .. wrapCharacters)
     end
@@ -32,26 +40,36 @@ end
 
 function inlineLink()
     -- Fetch URL from the system clipboard
-    local linkUrl = hs.pasteboard.getContents()
+    local originalClipboardContents = hs.pasteboard.getContents()
 
-    -- Copy the currently-selected text to use as the link text
-    keyUpDown('cmd', 'c')
+    local contentIsUrl = originalClipboardContents and string.match(originalClipboardContents, '[a-z]*://[^ >,;]*') or false
+    local linkUrl = contentIsUrl and originalClipboardContents or ''
 
-    -- Allow some time for the command+c keystroke to fire asynchronously before
-    -- we try to read from the clipboard
+    local focusedElement = hs.uielement.focusedElement()
+    local selectedText = focusedElement and focusedElement:selectedText() or ''
+
+    -- todo
+    -- some app can not get focusedElement and selectedText
+    -- such as some Elactron app, like Vscode/Obsidan
+    -- here do that for workaround
+    if (focusedElement == nil or selectedText == '') then
+        inputContent('[' .. '' .. '](' .. linkUrl .. ')')
+
+        if linkUrl == '' then
+            delayKeyUpDownLeftArrow(3)
+        else
+            -- todo: if content is valid url, how to move cursor to inside the brackets
+        end
+    else
+        inputContent('[' .. selectedText .. '](' .. linkUrl .. ')')
+
+        if linkUrl == '' then
+            delayKeyUpDownLeftArrow(1)
+        end
+    end
+
     hs.timer.doAfter(0.2, function()
-        -- Construct the formatted output and paste it over top of the
-        -- currently-selected text
-        local linkText = hs.pasteboard.getContents() or ''
-        local markdown = '[' .. linkText .. '](' .. linkUrl .. ')'
-        hs.pasteboard.setContents(markdown)
-        keyUpDown('cmd', 'v')
-
-        -- Allow some time for the command+v keystroke to fire asynchronously before
-        -- we restore the original clipboard
-        hs.timer.doAfter(0.2, function()
-            hs.pasteboard.setContents(linkUrl)
-        end)
+        hs.pasteboard.setContents(linkUrl)
     end)
 end
 
