@@ -1,0 +1,12 @@
+{
+  "print template": {
+    "prefix": "print",
+    "body": [
+      "print()",
+      "print('======= ' .. '$1' .. ' =======')",
+      "print($1)",
+      "print('======= end =======')"
+    ],
+    "description": ""
+  }
+}

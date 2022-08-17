@@ -1,8 +1,5 @@
-ClipboardTool = hs.loadSpoon("ClipboardTool")
-
-local hyperKey = {"shift", "alt", "ctrl", "cmd"}
-
 -------------- 剪贴板相关功能 -----------------
+ClipboardTool = hs.loadSpoon("ClipboardTool")
 
 -- true: 显示在菜单栏
 ClipboardTool.show_in_menubar = false
