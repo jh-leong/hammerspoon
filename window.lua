@@ -1,8 +1,6 @@
 -------------- 窗口相关功能 -----------------
 WinWin = hs.loadSpoon("WinWin")
 
-local hyperKey = {"shift", "alt", "ctrl", "cmd"}
-
 -- 窗口最大化
 hs.hotkey.bind(hyperKey, "f", function()
     WinWin:moveAndResize('maximize')
@@ -62,3 +60,39 @@ end)
 hs.hotkey.bind(hyperKey, "o", function()
     activate_other_screen(false)
 end)
+
+-------------- 将窗口移动至其他 space -----------------
+
+-- function moveWindowOneSpace(direction)
+--     local mouseOrigin = hs.mouse.absolutePosition()
+--     local win = hs.window.focusedWindow()
+--     local clickPoint = win:zoomButtonRect()
+
+--     clickPoint.x = clickPoint.x + clickPoint.w + 5
+--     clickPoint.y = clickPoint.y + (clickPoint.h / 2)
+
+--     local mouseClickEvent = hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftmousedown, clickPoint)
+--     mouseClickEvent:post()
+--     hs.timer.usleep(150000)
+
+--     local nextSpaceDownEvent = hs.eventtap.event.newKeyEvent({"ctrl"}, direction, true)
+--     nextSpaceDownEvent:post()
+--     hs.timer.usleep(150000)
+
+--     local nextSpaceUpEvent = hs.eventtap.event.newKeyEvent({"ctrl"}, direction, false)
+--     nextSpaceUpEvent:post()
+--     hs.timer.usleep(150000)
+
+--     local mouseReleaseEvent = hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftmouseup, clickPoint)
+--     mouseReleaseEvent:post()
+--     hs.timer.usleep(150000)
+
+--     hs.mouse.setAbsolutePosition(mouseOrigin)
+-- end
+
+-- hs.hotkey.bind(hyperKey, "e", function()
+--     moveWindowOneSpace("right")
+-- end)
+-- hs.hotkey.bind(hyperKey, "q", function()
+--     moveWindowOneSpace("left")
+-- end)
