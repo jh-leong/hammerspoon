@@ -13,7 +13,12 @@ statusmessage.new = function(messageText)
         local styledTextAttributes = {
             font = {
                 name = 'Monaco',
-                size = 24
+                size = 20
+            },
+            color = {
+                red = 1,
+                green = 1,
+                blue = 1
             }
         }
 
@@ -26,20 +31,19 @@ statusmessage.new = function(messageText)
             w = styledTextSize.w + 40,
             h = styledTextSize.h + 40
         }
-        local text = drawing.text(textRect, styledText):setAlpha(0.7)
+        local text = drawing.text(textRect, styledText):setAlpha(1)
 
         local background = drawing.rectangle({
-            x = frame.w - styledTextSize.w - 45,
-            y = frame.h - styledTextSize.h - 3,
-            w = styledTextSize.w + 15,
-            h = styledTextSize.h + 6
+            x = frame.w - styledTextSize.w - 54,
+            y = frame.h - styledTextSize.h - 6,
+            w = styledTextSize.w + 28,
+            h = styledTextSize.h + 12
         })
         background:setRoundedRectRadii(10, 10)
         background:setFillColor({
-            red = 0,
-            green = 0,
-            blue = 0,
-            alpha = 0.6
+            red = 0.167,
+            green = 0.131,
+            blue = 0.247
         })
 
         return background, text
