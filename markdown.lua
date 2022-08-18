@@ -1,5 +1,4 @@
 -- * code from: https://github.com/jasonrudolph/keyboard/blob/main/hammerspoon/markdown.lua
-
 function inputContent(text)
     hs.pasteboard.setContents(text)
     keyUpDown('cmd', 'v')
@@ -42,7 +41,8 @@ function inlineLink()
     -- Fetch URL from the system clipboard
     local originalClipboardContents = hs.pasteboard.getContents()
 
-    local contentIsUrl = originalClipboardContents and string.match(originalClipboardContents, '[a-z]*://[^ >,;]*') or false
+    local contentIsUrl = originalClipboardContents and string.match(originalClipboardContents, '[a-z]*://[^ >,;]*') or
+                             false
     local linkUrl = contentIsUrl and originalClipboardContents or ''
 
     local focusedElement = hs.uielement.focusedElement()
@@ -54,12 +54,7 @@ function inlineLink()
     -- here do that for workaround
     if (focusedElement == nil or selectedText == '') then
         inputContent('[' .. '' .. '](' .. linkUrl .. ')')
-
-        if linkUrl == '' then
-            delayKeyUpDownLeftArrow(3)
-        else
-            -- todo: if content is valid url, how to move cursor to inside the brackets
-        end
+        delayKeyUpDownLeftArrow(3 + #linkUrl)
     else
         inputContent('[' .. selectedText .. '](' .. linkUrl .. ')')
 
