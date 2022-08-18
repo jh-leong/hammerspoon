@@ -134,6 +134,10 @@ hs.hotkey.bind({'ctrl'}, 'm', function()
     markdownMode:enter()
 end)
 
+-- Use Control+m or escape to exit Markdown Mode
 markdownMode:bind({'ctrl'}, 'm', function()
+    markdownMode:exit()
+end)
+markdownMode:bind({}, 'escape', function()
     markdownMode:exit()
 end)
