@@ -93,6 +93,7 @@ end
 -- selected text as bold in Markdown, hit Control+m, and then b.
 --
 --   1 - 6 => print # befor the selected text (e.g., # H1, ## H2)
+--   t => print task list ("t" for "task list")
 --   d => print dashes ("d" for "dashes")
 --   h => wrap the selected text in double equal sign ("h" for "hightlight")
 --   b => wrap the selected text in double asterisks ("b" for "bold")
@@ -121,6 +122,10 @@ function markdownMode.bindWithAutomaticExit(mode, key, fn)
         fn()
     end)
 end
+
+markdownMode:bindWithAutomaticExit('t', function()
+    inputContent('- [ ] ')
+end)
 
 markdownMode:bindWithAutomaticExit('d', function()
     inputContent('---')
