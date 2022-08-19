@@ -25,6 +25,27 @@ function cachClipboard(fn)
     end)
 end
 
+function createHeading(level)
+    cachClipboard(function()
+        local focusedElement = hs.uielement.focusedElement()
+        local selectedText = focusedElement and focusedElement:selectedText() or ''
+
+        local numberSign = ''
+
+        for i = 1, level, 1 do
+            numberSign = numberSign .. '#'
+        end
+
+        -- todo: see the todo in wrapSelectedText
+        if (focusedElement == nil or selectedText == '') then
+            inputContent(numberSign .. ' ')
+        else
+            inputContent(numberSign .. selectedText .. ' ')
+        end
+    end)
+
+end
+
 function wrapSelectedText(wrapCharacters)
     cachClipboard(function()
         local focusedElement = hs.uielement.focusedElement()
@@ -52,10 +73,7 @@ function inlineLink()
         local focusedElement = hs.uielement.focusedElement()
         local selectedText = focusedElement and focusedElement:selectedText() or ''
 
-        -- todo
-        -- some app can not get focusedElement and selectedText
-        -- such as some Elactron app, like Vscode/Obsidan
-        -- here do that for workaround
+        -- todo: see the todo in wrapSelectedText
         if (focusedElement == nil or selectedText == '') then
             inputContent('[' .. '' .. '](' .. linkUrl .. ')')
             delayKeyUpDownLeftArrow(3 + #linkUrl)
@@ -77,7 +95,8 @@ end
 -- any shortcut below to perform a formatting action. For example, to format the
 -- selected text as bold in Markdown, hit Control+m, and then b.
 --
---   h => wrap the selected text in double = ("b" for "hightlight")
+--   1 - 6 => print # befor the selected text (e.g., # H1, ## H2)
+--   h => wrap the selected text in double equal sign ("h" for "hightlight")
 --   b => wrap the selected text in double asterisks ("b" for "bold")
 --   c => wrap the selected text in backticks ("c" for "code")
 --   i => wrap the selected text in single asterisks ("i" for "italic")
@@ -127,6 +146,25 @@ end)
 
 markdownMode:bindWithAutomaticExit('h', function()
     wrapSelectedText('==')
+end)
+
+markdownMode:bindWithAutomaticExit('1', function()
+    createHeading(1)
+end)
+markdownMode:bindWithAutomaticExit('2', function()
+    createHeading(2)
+end)
+markdownMode:bindWithAutomaticExit('3', function()
+    createHeading(3)
+end)
+markdownMode:bindWithAutomaticExit('4', function()
+    createHeading(4)
+end)
+markdownMode:bindWithAutomaticExit('5', function()
+    createHeading(5)
+end)
+markdownMode:bindWithAutomaticExit('6', function()
+    createHeading(6)
 end)
 
 -- Use Control+m to toggle Markdown Mode
