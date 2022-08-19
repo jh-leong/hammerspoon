@@ -40,7 +40,7 @@ function createHeading(level)
         if (focusedElement == nil or selectedText == '') then
             inputContent(numberSign .. ' ')
         else
-            inputContent(numberSign .. selectedText .. ' ')
+            inputContent(numberSign .. ' ' .. selectedText)
         end
     end)
 
