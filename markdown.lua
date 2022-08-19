@@ -12,23 +12,11 @@ function delayKeyUpDownLeftArrow(triggerCount)
     end)
 end
 
-function wrapSelectedText(wrapCharacters)
-    -- Preserve the current contents of the system clipboard
+function cachClipboard(fn)
+    -- Fetch content from the system clipboard
     local originalClipboardContents = hs.pasteboard.getContents()
 
-    local focusedElement = hs.uielement.focusedElement()
-    local selectedText = focusedElement and focusedElement:selectedText() or ''
-
-    -- todo
-    -- some app can not get focusedElement and selectedText
-    -- such as some Elactron app, like Vscode/Obsidan
-    -- here do that for workaround
-    if (focusedElement == nil or selectedText == '') then
-        inputContent(wrapCharacters .. '' .. wrapCharacters)
-        delayKeyUpDownLeftArrow(#wrapCharacters)
-    else
-        inputContent(wrapCharacters .. selectedText .. wrapCharacters)
-    end
+    fn(originalClipboardContents)
 
     -- Allow some time for the command+v keystroke to fire asynchronously before
     -- we restore the original clipboard
@@ -37,34 +25,47 @@ function wrapSelectedText(wrapCharacters)
     end)
 end
 
-function inlineLink()
-    -- Fetch URL from the system clipboard
-    local originalClipboardContents = hs.pasteboard.getContents()
+function wrapSelectedText(wrapCharacters)
+    cachClipboard(function()
+        local focusedElement = hs.uielement.focusedElement()
+        local selectedText = focusedElement and focusedElement:selectedText() or ''
 
-    local contentIsUrl = originalClipboardContents and string.match(originalClipboardContents, '[a-z]*://[^ >,;]*') or
-                             false
-    local linkUrl = contentIsUrl and originalClipboardContents or ''
-
-    local focusedElement = hs.uielement.focusedElement()
-    local selectedText = focusedElement and focusedElement:selectedText() or ''
-
-    -- todo
-    -- some app can not get focusedElement and selectedText
-    -- such as some Elactron app, like Vscode/Obsidan
-    -- here do that for workaround
-    if (focusedElement == nil or selectedText == '') then
-        inputContent('[' .. '' .. '](' .. linkUrl .. ')')
-        delayKeyUpDownLeftArrow(3 + #linkUrl)
-    else
-        inputContent('[' .. selectedText .. '](' .. linkUrl .. ')')
-
-        if linkUrl == '' then
-            delayKeyUpDownLeftArrow(1)
+        -- todo
+        -- some app can not get focusedElement and selectedText
+        -- such as some Elactron app, like Vscode/Obsidan
+        -- here do that for workaround
+        if (focusedElement == nil or selectedText == '') then
+            inputContent(wrapCharacters .. '' .. wrapCharacters)
+            delayKeyUpDownLeftArrow(#wrapCharacters)
+        else
+            inputContent(wrapCharacters .. selectedText .. wrapCharacters)
         end
-    end
+    end)
+end
 
-    hs.timer.doAfter(0.2, function()
-        hs.pasteboard.setContents(linkUrl)
+function inlineLink()
+    cachClipboard(function(originalClipboardContents)
+        local contentIsUrl =
+            originalClipboardContents and string.match(originalClipboardContents, '[a-z]*://[^ >,;]*') or false
+        local linkUrl = contentIsUrl and originalClipboardContents or ''
+
+        local focusedElement = hs.uielement.focusedElement()
+        local selectedText = focusedElement and focusedElement:selectedText() or ''
+
+        -- todo
+        -- some app can not get focusedElement and selectedText
+        -- such as some Elactron app, like Vscode/Obsidan
+        -- here do that for workaround
+        if (focusedElement == nil or selectedText == '') then
+            inputContent('[' .. '' .. '](' .. linkUrl .. ')')
+            delayKeyUpDownLeftArrow(3 + #linkUrl)
+        else
+            inputContent('[' .. selectedText .. '](' .. linkUrl .. ')')
+
+            if linkUrl == '' then
+                delayKeyUpDownLeftArrow(1)
+            end
+        end
     end)
 end
 
@@ -81,8 +82,7 @@ end
 --   c => wrap the selected text in backticks ("c" for "code")
 --   i => wrap the selected text in single asterisks ("i" for "italic")
 --   s => wrap the selected text in double tildes ("s" for "strikethrough")
---   l => convert the currently-selected text to an inline link, using a URL
---        from the clipboard ("l" for "link")
+--   l => convert the currently-selected text to an inline link, using a URL from the clipboard ("l" for "link")
 --------------------------------------------------------------------------------
 
 markdownMode = hs.hotkey.modal.new({}, 'F20')
