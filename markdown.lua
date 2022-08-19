@@ -96,6 +96,7 @@ end
 -- selected text as bold in Markdown, hit Control+m, and then b.
 --
 --   1 - 6 => print # befor the selected text (e.g., # H1, ## H2)
+--   d => print dashes ("d" for "dashes")
 --   h => wrap the selected text in double equal sign ("h" for "hightlight")
 --   b => wrap the selected text in double asterisks ("b" for "bold")
 --   c => wrap the selected text in backticks ("c" for "code")
@@ -123,6 +124,12 @@ function markdownMode.bindWithAutomaticExit(mode, key, fn)
         fn()
     end)
 end
+
+markdownMode:bindWithAutomaticExit('d', function()
+    cachClipboard(function()
+        inputContent('---')
+    end)
+end)
 
 markdownMode:bindWithAutomaticExit('b', function()
     wrapSelectedText('**')
