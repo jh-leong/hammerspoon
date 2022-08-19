@@ -1,29 +1,93 @@
--------------- 窗口相关功能 -----------------
 WinWin = hs.loadSpoon("WinWin")
 
--- 窗口最大化
+windowMode = hs.hotkey.modal.new({}, 'F19')
+
+local message = require('status-message')
+windowMode.statusMessage = message.new('Windom Mode (hyperKey + w)')
+
+windowMode.entered = function()
+    windowMode.statusMessage:show()
+end
+windowMode.exited = function()
+    windowMode.statusMessage:hide()
+end
+
+windowMode:bind({}, 'w', function()
+    WinWin:moveToScreen('up')
+end)
+windowMode:bind({}, 's', function()
+    WinWin:moveToScreen('down')
+end)
+windowMode:bind({}, 'd', function()
+    WinWin:moveToScreen('right')
+end)
+windowMode:bind({}, 'a', function()
+    WinWin:moveToScreen('left')
+end)
+windowMode:bind({}, 'z', function()
+    WinWin:moveAndResize('cornerSW')
+end)
+windowMode:bind({}, 'c', function()
+    WinWin:moveAndResize('cornerSE')
+end)
+windowMode:bind({}, 'e', function()
+    WinWin:moveAndResize('cornerNE')
+end)
+windowMode:bind({}, 'q', function()
+    WinWin:moveAndResize('cornerNW')
+end)
+windowMode:bind({}, "f", function()
+    WinWin:moveAndResize('maximize')
+end)
+windowMode:bind({}, "x", function()
+    WinWin:moveAndResize('center')
+end)
+windowMode:bind({}, "h", function()
+    WinWin:moveAndResize('halfleft')
+end)
+windowMode:bind({}, "j", function()
+    WinWin:moveAndResize('halfdown')
+end)
+windowMode:bind({}, "k", function()
+    WinWin:moveAndResize('halfup')
+end)
+windowMode:bind({}, "l", function()
+    WinWin:moveAndResize('halfright')
+end)
+windowMode:bind({}, "-", function()
+    WinWin:moveAndResize('shrink')
+end)
+windowMode:bind({}, "=", function()
+    WinWin:moveAndResize('expand')
+end)
+windowMode:bind({}, "down", function()
+    WinWin:stepMove('down')
+end)
+windowMode:bind({}, "up", function()
+    WinWin:stepMove('up')
+end)
+windowMode:bind({}, "right", function()
+    WinWin:stepMove('right')
+end)
+windowMode:bind({}, "left", function()
+    WinWin:stepMove('left')
+end)
+
 hs.hotkey.bind(hyperKey, "f", function()
     WinWin:moveAndResize('maximize')
 end)
 
--- 将窗口移动至 上 屏幕
-hs.hotkey.bind(hyperKey, "w", function()
-    WinWin:moveToScreen('up')
+-- Use Control+m to toggle Markdown Mode
+hs.hotkey.bind(hyperKey, 'w', function()
+    windowMode:enter()
 end)
 
--- 将窗口移动至 下 屏幕
-hs.hotkey.bind(hyperKey, "s", function()
-    WinWin:moveToScreen('down')
+-- Use Control+m or escape to exit Markdown Mode
+windowMode:bind(hyperKey, 'w', function()
+    windowMode:exit()
 end)
-
--- 将窗口移动至 左 屏幕
-hs.hotkey.bind(hyperKey, "a", function()
-    WinWin:moveToScreen('left')
-end)
-
--- 将窗口移动至 右 屏幕
-hs.hotkey.bind(hyperKey, "d", function()
-    WinWin:moveToScreen('right')
+windowMode:bind({}, 'escape', function()
+    windowMode:exit()
 end)
 
 -------------- focus display -----------------
@@ -52,9 +116,15 @@ end
 hs.hotkey.bind(hyperKey, "p", function()
     activateDisplay(hs.screen.primaryScreen())
 end)
+windowMode:bind({}, "p", function()
+    activateDisplay(hs.screen.primaryScreen())
+end)
 
 -- focus next display
 hs.hotkey.bind(hyperKey, "o", function()
+    activateDisplay(hs.mouse.getCurrentScreen():next())
+end)
+windowMode:bind({}, "o", function()
     activateDisplay(hs.mouse.getCurrentScreen():next())
 end)
 
