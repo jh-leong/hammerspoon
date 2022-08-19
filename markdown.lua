@@ -1,9 +1,4 @@
 -- * code from: https://github.com/jasonrudolph/keyboard/blob/main/hammerspoon/markdown.lua
-function inputContent(text)
-    hs.pasteboard.setContents(text)
-    keyUpDown('cmd', 'v')
-end
-
 function delayKeyUpDownLeftArrow(triggerCount)
     hs.timer.doAfter(0.01, function()
         for i = triggerCount, 1, -1 do
@@ -25,66 +20,68 @@ function cachClipboard(fn)
     end)
 end
 
-function createHeading(level)
+function inputContent(text)
     cachClipboard(function()
-        local focusedElement = hs.uielement.focusedElement()
-        local selectedText = focusedElement and focusedElement:selectedText() or ''
-
-        local numberSign = ''
-
-        for i = 1, level, 1 do
-            numberSign = numberSign .. '#'
-        end
-
-        -- todo: see the todo in wrapSelectedText
-        if (focusedElement == nil or selectedText == '') then
-            inputContent(numberSign .. ' ')
-        else
-            inputContent(numberSign .. ' ' .. selectedText)
-        end
+        hs.pasteboard.setContents(text)
+        keyUpDown('cmd', 'v')
     end)
+end
+
+function createHeading(level)
+    local focusedElement = hs.uielement.focusedElement()
+    local selectedText = focusedElement and focusedElement:selectedText() or ''
+
+    local numberSign = ''
+
+    for i = 1, level, 1 do
+        numberSign = numberSign .. '#'
+    end
+
+    -- todo: see the todo in wrapSelectedText
+    if (focusedElement == nil or selectedText == '') then
+        inputContent(numberSign .. ' ')
+    else
+        inputContent(numberSign .. ' ' .. selectedText)
+    end
 
 end
 
 function wrapSelectedText(wrapCharacters)
-    cachClipboard(function()
-        local focusedElement = hs.uielement.focusedElement()
-        local selectedText = focusedElement and focusedElement:selectedText() or ''
+    local focusedElement = hs.uielement.focusedElement()
+    local selectedText = focusedElement and focusedElement:selectedText() or ''
 
-        -- todo
-        -- some app can not get focusedElement and selectedText
-        -- such as some Elactron app, like Vscode/Obsidan
-        -- here do that for workaround
-        if (focusedElement == nil or selectedText == '') then
-            inputContent(wrapCharacters .. '' .. wrapCharacters)
-            delayKeyUpDownLeftArrow(#wrapCharacters)
-        else
-            inputContent(wrapCharacters .. selectedText .. wrapCharacters)
-        end
-    end)
+    -- todo
+    -- some app can not get focusedElement and selectedText
+    -- such as some Elactron app, like Vscode/Obsidan
+    -- here do that for workaround
+    if (focusedElement == nil or selectedText == '') then
+        inputContent(wrapCharacters .. '' .. wrapCharacters)
+        delayKeyUpDownLeftArrow(#wrapCharacters)
+    else
+        inputContent(wrapCharacters .. selectedText .. wrapCharacters)
+    end
 end
 
 function inlineLink()
-    cachClipboard(function(originalClipboardContents)
-        local contentIsUrl =
-            originalClipboardContents and string.match(originalClipboardContents, '[a-z]*://[^ >,;]*') or false
-        local linkUrl = contentIsUrl and originalClipboardContents or ''
+    local clipboardContent = hs.pasteboard.getContents()
 
-        local focusedElement = hs.uielement.focusedElement()
-        local selectedText = focusedElement and focusedElement:selectedText() or ''
+    local contentIsUrl = clipboardContent and string.match(clipboardContent, '[a-z]*://[^ >,;]*') or false
+    local linkUrl = contentIsUrl and clipboardContent or ''
 
-        -- todo: see the todo in wrapSelectedText
-        if (focusedElement == nil or selectedText == '') then
-            inputContent('[' .. '' .. '](' .. linkUrl .. ')')
-            delayKeyUpDownLeftArrow(3 + #linkUrl)
-        else
-            inputContent('[' .. selectedText .. '](' .. linkUrl .. ')')
+    local focusedElement = hs.uielement.focusedElement()
+    local selectedText = focusedElement and focusedElement:selectedText() or ''
 
-            if linkUrl == '' then
-                delayKeyUpDownLeftArrow(1)
-            end
+    -- todo: see the todo in wrapSelectedText
+    if (focusedElement == nil or selectedText == '') then
+        inputContent('[' .. '' .. '](' .. linkUrl .. ')')
+        delayKeyUpDownLeftArrow(3 + #linkUrl)
+    else
+        inputContent('[' .. selectedText .. '](' .. linkUrl .. ')')
+
+        if linkUrl == '' then
+            delayKeyUpDownLeftArrow(1)
         end
-    end)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -126,9 +123,7 @@ function markdownMode.bindWithAutomaticExit(mode, key, fn)
 end
 
 markdownMode:bindWithAutomaticExit('d', function()
-    cachClipboard(function()
-        inputContent('---')
-    end)
+    inputContent('---')
 end)
 
 markdownMode:bindWithAutomaticExit('b', function()
