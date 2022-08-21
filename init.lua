@@ -1,3 +1,4 @@
+-- set your own hyperKey
 hyperKey = {"shift", "alt", "ctrl", "cmd"}
 
 keyUpDown = function(modifiers, key)
