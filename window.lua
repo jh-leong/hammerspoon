@@ -24,16 +24,16 @@ end)
 windowMode:bind({}, 'a', function()
     WinWin:moveToScreen('left')
 end)
-windowMode:bind({}, 'z', function()
+windowMode:bind({}, 'i', function()
     WinWin:moveAndResize('cornerSW')
 end)
-windowMode:bind({}, 'c', function()
+windowMode:bind({}, 'o', function()
     WinWin:moveAndResize('cornerSE')
 end)
-windowMode:bind({}, 'e', function()
+windowMode:bind({}, 'u', function()
     WinWin:moveAndResize('cornerNE')
 end)
-windowMode:bind({}, 'q', function()
+windowMode:bind({}, 'y', function()
     WinWin:moveAndResize('cornerNW')
 end)
 windowMode:bind({}, "f", function()
@@ -77,13 +77,13 @@ hs.hotkey.bind(hyperKey, "f", function()
     WinWin:moveAndResize('maximize')
 end)
 
--- Use Control+m to toggle Markdown Mode
+-- Use hyperKey+w to toggle window Mode
 hs.hotkey.bind(hyperKey, 'w', function()
     windowMode:enter()
 end)
 
--- Use Control+m or escape to exit Markdown Mode
-windowMode:bind(hyperKey, 'w', function()
+-- Use q or escape to exit window Mode
+windowMode:bind({}, 'q', function()
     windowMode:exit()
 end)
 windowMode:bind({}, 'escape', function()
@@ -113,18 +113,18 @@ function activateDisplay(display)
 end
 
 -- focus main display
-hs.hotkey.bind(hyperKey, "p", function()
+hs.hotkey.bind(hyperKey, "m", function()
     activateDisplay(hs.screen.primaryScreen())
 end)
-windowMode:bind({}, "p", function()
+windowMode:bind({}, "m", function()
     activateDisplay(hs.screen.primaryScreen())
 end)
 
 -- focus next display
-hs.hotkey.bind(hyperKey, "o", function()
+hs.hotkey.bind(hyperKey, "n", function()
     activateDisplay(hs.mouse.getCurrentScreen():next())
 end)
-windowMode:bind({}, "o", function()
+windowMode:bind({}, "n", function()
     activateDisplay(hs.mouse.getCurrentScreen():next())
 end)
 
