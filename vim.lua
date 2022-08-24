@@ -4,6 +4,27 @@ function loopKeyUpDown(triggerCount, modifiers, key)
     end
 end
 
+local gKeyHasStroked = false
+function handleGKeyDownEvent(flags)
+    if flags and flags.shift then
+        keyUpDown({}, 'end')
+        keyUpDown({'cmd'}, 'end')
+        keyUpDown({'ctrl'}, 'end')
+    else
+        if gKeyHasStroked then
+            keyUpDown({}, 'home')
+            keyUpDown({'cmd'}, 'home')
+            keyUpDown({'ctrl'}, 'home')
+            gKeyHasStroked = false
+        else
+            gKeyHasStroked = true
+            hs.timer.doAfter(0.2, function()
+                gKeyHasStroked = false
+            end)
+        end
+    end
+end
+
 vimMode = hs.hotkey.modal.new({}, 'F18')
 
 local message = require('status-message')
@@ -73,6 +94,10 @@ function runTap()
             keyUpDown({'alt'}, 'left')
             return true;
         end
+        if keyCode == hs.keycodes.map['g'] then
+            handleGKeyDownEvent(flags)
+            return true;
+        end
 
         return false
     end)
@@ -81,7 +106,7 @@ function runTap()
 end
 
 -- Use hyperKey+v to toggle vim Mode
-hs.hotkey.bind(hyperKey, 'v', function()
+hs.hotkey.bind({'cmd'}, ';', function()
     vimMode:enter()
     runTap();
 end)
