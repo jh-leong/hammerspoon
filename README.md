@@ -73,6 +73,10 @@ Use <kbd>control</kbd> + <kbd>m</kbd> to turn on Markdown Mode. Then, use any sh
 
   Example: `- [] `
 
+- Use <kbd>p</kbd> to print img wrap("p" for "picture")
+
+  Example: `![]()`
+
 - Use <kbd>d</kbd> to print dashes("D" for "Dashes")
 
   Example: `---`

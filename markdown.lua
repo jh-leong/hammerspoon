@@ -127,6 +127,11 @@ markdownMode:bindWithAutomaticExit('t', function()
     inputContent('- [ ] ')
 end)
 
+markdownMode:bindWithAutomaticExit('p', function()
+    inputContent('![]()')
+    delayKeyUpDownLeftArrow(3)
+end)
+
 markdownMode:bindWithAutomaticExit('d', function()
     inputContent('---')
 end)
