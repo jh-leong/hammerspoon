@@ -1,5 +1,9 @@
 WinWin = hs.loadSpoon("WinWin")
 
+local windowModeEvTap
+local isActive = false
+local SizeStep = 20
+
 windowMode = hs.hotkey.modal.new({}, 'F19')
 
 local message = require('status-message')
@@ -24,16 +28,16 @@ end)
 windowMode:bind({}, 'a', function()
     WinWin:moveToScreen('left')
 end)
-windowMode:bind({}, 'n', function()
+windowMode:bind({}, ',', function()
     WinWin:moveAndResize('cornerSW')
 end)
-windowMode:bind({}, 'm', function()
+windowMode:bind({}, '.', function()
     WinWin:moveAndResize('cornerSE')
 end)
-windowMode:bind({}, 'u', function()
+windowMode:bind({}, 'm', function()
     WinWin:moveAndResize('cornerNE')
 end)
-windowMode:bind({}, 'y', function()
+windowMode:bind({}, 'n', function()
     WinWin:moveAndResize('cornerNW')
 end)
 windowMode:bind({}, "f", function()
@@ -54,52 +58,103 @@ end)
 windowMode:bind({}, "l", function()
     WinWin:moveAndResize('halfright')
 end)
-windowMode:bind({}, "-", function()
-    WinWin:moveAndResize('shrink')
-end)
-windowMode:bind({}, "=", function()
-    WinWin:moveAndResize('expand')
-end)
-windowMode:bind({}, "down", function()
-    WinWin:stepMove('down')
-end)
-windowMode:bind({}, "up", function()
-    WinWin:stepMove('up')
-end)
-windowMode:bind({}, "right", function()
-    WinWin:stepMove('right')
-end)
-windowMode:bind({}, "left", function()
-    WinWin:stepMove('left')
-end)
 
 hs.hotkey.bind(hyperKey, "f", function()
     WinWin:moveAndResize('maximize')
 end)
 
+local function runTap()
+    windowModeEvTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
+        -- Gets the keyboard modifiers of an event
+        local flags = e:getFlags()
+        local keyCode = e:getKeyCode()
+
+        local window = hs.window.focusedWindow()
+        local frame = window:frame()
+
+        if keyCode == hs.keycodes.map['y'] then
+            if flags and flags.shift then
+                frame.w = frame.w - SizeStep
+            else
+                frame.w = frame.w + SizeStep
+            end
+            window:setFrame(frame)
+            return true
+        end
+        if keyCode == hs.keycodes.map['u'] then
+            if flags and flags.shift then
+                frame.h = frame.h - SizeStep
+            else
+                frame.h = frame.h + SizeStep
+            end
+            window:setFrame(frame)
+            return true
+        end
+        if keyCode == hs.keycodes.map['-'] then
+            WinWin:moveAndResize('shrink')
+            return true
+        end
+        if keyCode == hs.keycodes.map['='] then
+            WinWin:moveAndResize('expand')
+            return true
+        end
+        if keyCode == hs.keycodes.map['up'] then
+            WinWin:stepMove('up')
+            return true
+        end
+        if keyCode == hs.keycodes.map['right'] then
+            WinWin:stepMove('right')
+            return true
+        end
+        if keyCode == hs.keycodes.map['left'] then
+            WinWin:stepMove('left')
+            return true
+        end
+        if keyCode == hs.keycodes.map['down'] then
+            WinWin:stepMove('down')
+            return true
+        end
+
+        return false
+    end)
+
+    windowModeEvTap:start()
+end
+
 -- Use hyperKey+w to toggle window Mode
 hs.hotkey.bind(hyperKey, 'w', function()
+    if isActive then
+        return
+    end
+    isActive = true
     windowMode:enter()
+    runTap()
 end)
+
+local function exitWindowMode()
+    windowModeEvTap:stop()
+    windowMode:exit()
+    isActive = false
+end
 
 -- Use q or escape to exit window Mode
 windowMode:bind({}, 'q', function()
-    windowMode:exit()
+    exitWindowMode();
 end)
 windowMode:bind({}, 'escape', function()
-    windowMode:exit()
+    exitWindowMode();
 end)
 
 -------------- focus display -----------------
 
-function moveMouse2TargetDisplay(display)
+local function moveMouse2TargetDisplay(display)
     local rect = display:fullFrame()
     local center = hs.geometry.rectMidPoint(rect)
     hs.mouse.absolutePosition(center)
 end
 
 -- * code from: https://gist.github.com/kizzx2/e542fa74b80b7563045a 
-function getDisplayUnderMouse()
+local function getDisplayUnderMouse()
     local my_pos = hs.geometry.new(hs.mouse.absolutePosition())
     local my_screen = hs.mouse.getCurrentScreen()
     return hs.fnutils.find(hs.window.orderedWindows(), function(w)
@@ -107,7 +162,7 @@ function getDisplayUnderMouse()
     end)
 end
 
-function activateDisplay(display)
+local function activateDisplay(display)
     moveMouse2TargetDisplay(display)
     getDisplayUnderMouse():focus()
 end

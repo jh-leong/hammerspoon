@@ -30,10 +30,14 @@ Use <kbd>hyperKey</kbd> + <kbd>w</kbd> to turn on Window Layout Mode (use <kbd>q
 - Use <kbd>j</kbd> to send window down (bottom half of screen)
 - Use <kbd>k</kbd> to send window up (top half of screen)
 - Use <kbd>l</kbd> to send window right (right half of screen)
-- Use <kbd>y</kbd> to send window to upper left quarter of screen
-- Use <kbd>u</kbd> to send window to upper right quarter of screen
-- Use <kbd>n</kbd> to send window to lower left quarter of screen
-- Use <kbd>m</kbd> to send window to lower right quarter of screen
+- Use <kbd>n</kbd> to send window to upper left quarter of screen
+- Use <kbd>m</kbd> to send window to upper right quarter of screen
+- Use <kbd>,</kbd> to send window to lower left quarter of screen
+- Use <kbd>.</kbd> to send window to lower right quarter of screen
+- Use <kbd>y</kbd> to increase the window width
+- Use <kbd>Y</kbd> to decrease the window width
+- Use <kbd>u</kbd> to increase the window height
+- Use <kbd>U</kbd> to decrease the window height
 - Use <kbd>x</kbd> to send window to center of screen
 - Use <kbd>f</kbd> to resize window to fill the screen
 - Use <kbd>w</kbd> to send window to the monitor on the above (if there is one)
