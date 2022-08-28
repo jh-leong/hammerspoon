@@ -4,6 +4,8 @@ local windowModeEvTap
 local isActive = false
 local SizeStep = 20
 
+WinWin.gridparts = 120 
+
 windowMode = hs.hotkey.modal.new({}, 'F19')
 
 local message = require('status-message')
