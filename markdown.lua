@@ -7,7 +7,7 @@ function delayKeyUpDownLeftArrow(triggerCount)
     end)
 end
 
-function cachClipboard(fn)
+function cacheClipboard(fn)
     -- Fetch content from the system clipboard
     local originalClipboardContents = hs.pasteboard.getContents()
 
@@ -21,7 +21,7 @@ function cachClipboard(fn)
 end
 
 function inputContent(text)
-    cachClipboard(function()
+    cacheClipboard(function()
         hs.pasteboard.setContents(text)
         keyUpDown('cmd', 'v')
     end)
@@ -47,19 +47,21 @@ function createHeading(level)
 end
 
 function wrapSelectedText(wrapCharacters)
-    local focusedElement = hs.uielement.focusedElement()
-    local selectedText = focusedElement and focusedElement:selectedText() or ''
+    cacheClipboard(function(originSelectText)
+        -- Copy the selected text to the clipboard
+        hs.eventtap.keyStroke({"cmd"}, "c")
+        -- hs.timer.usleep(5000)
 
-    -- todo
-    -- some app can not get focusedElement and selectedText
-    -- such as some Elactron app, like Vscode/Obsidan
-    -- here do that for workaround
-    if (focusedElement == nil or selectedText == '') then
-        inputContent(wrapCharacters .. '' .. wrapCharacters)
-        delayKeyUpDownLeftArrow(#wrapCharacters)
-    else
-        inputContent(wrapCharacters .. selectedText .. wrapCharacters)
-    end
+        local selectedText = hs.pasteboard.getContents()
+
+        if selectedText and selectedText ~= '' and selectedText ~= originSelectText then
+            -- Insert the wrapped text
+            inputContent(wrapCharacters .. selectedText .. wrapCharacters)
+        else
+            inputContent(wrapCharacters .. '' .. wrapCharacters)
+            delayKeyUpDownLeftArrow(#wrapCharacters)
+        end
+    end)
 end
 
 function inlineLink()

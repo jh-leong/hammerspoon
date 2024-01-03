@@ -61,9 +61,9 @@ windowMode:bind({}, "l", function()
     WinWin:moveAndResize('halfright')
 end)
 
-hs.hotkey.bind(hyperKey, "f", function()
-    WinWin:moveAndResize('maximize')
-end)
+-- hs.hotkey.bind(hyperKey, "f", function()
+--     WinWin:moveAndResize('maximize')
+-- end)
 
 local function runTap()
     windowModeEvTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
@@ -178,11 +178,11 @@ windowMode:bind({}, "o", function()
 end)
 
 -- focus next display
-hs.hotkey.bind(hyperKey, "i", function()
-    activateDisplay(hs.mouse.getCurrentScreen():next())
-end)
-windowMode:bind({}, "i", function()
-    activateDisplay(hs.mouse.getCurrentScreen():next())
-end)
+-- hs.hotkey.bind(hyperKey, "i", function()
+--     activateDisplay(hs.mouse.getCurrentScreen():next())
+-- end)
+-- windowMode:bind({}, "i", function()
+--     activateDisplay(hs.mouse.getCurrentScreen():next())
+-- end)
 
 -------------- focus display end -----------------

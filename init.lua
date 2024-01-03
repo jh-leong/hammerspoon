@@ -22,10 +22,9 @@ hs.hotkey.bind({'ctrl'}, '`', nil, function()
     hs.reload()
 end)
 
-require('vim')
+-- require('vim')
 require('window')
 require('markdown')
--- require('clipboard')
 
 hs.notify.new({
     title = 'Hammerspoon',
