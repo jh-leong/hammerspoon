@@ -46,15 +46,21 @@ function createHeading(level)
 
 end
 
-function wrapSelectedText(wrapCharacters)
+function wrapSelectedText(wrapCharacters, copy)
+    if copy == nil then
+        copy = true -- 默认为 true
+    end
+
     cacheClipboard(function(originSelectText)
-        -- Copy the selected text to the clipboard
-        hs.eventtap.keyStroke({"cmd"}, "c")
-        -- hs.timer.usleep(5000)
+        if copy then
+            -- Copy the selected text to the clipboard
+            hs.eventtap.keyStroke({"cmd"}, "c")
+            -- hs.timer.usleep(5000)
+        end
 
-        local selectedText = hs.pasteboard.getContents()
+        local selectedText = copy and hs.pasteboard.getContents() or ''
 
-        if selectedText and selectedText ~= '' and selectedText ~= originSelectText then
+        if selectedText and selectedText ~= '' then
             -- Insert the wrapped text
             inputContent(wrapCharacters .. selectedText .. wrapCharacters)
         else
@@ -118,50 +124,79 @@ markdownMode.exited = function()
 end
 
 -- Bind the given key to call the given function and exit Markdown mode
-function markdownMode.bindWithAutomaticExit(mode, key, fn)
-    mode:bind({}, key, function()
+function markdownMode.bindWithAutomaticExit(mode, key, fn, mods)
+    if mods == nil then
+        mods = {}
+    end
+
+    mode:bind(mods, key, function()
         mode:exit()
         fn()
     end)
 end
 
+-- 任务
 markdownMode:bindWithAutomaticExit('t', function()
     inputContent('- [ ] ')
 end)
 
+-- 插入图片
 markdownMode:bindWithAutomaticExit('p', function()
     inputContent('![]()')
     delayKeyUpDownLeftArrow(3)
 end)
 
+-- 分割线
 markdownMode:bindWithAutomaticExit('d', function()
     inputContent('---')
 end)
 
-markdownMode:bindWithAutomaticExit('b', function()
-    wrapSelectedText('**')
-end)
-
-markdownMode:bindWithAutomaticExit('i', function()
-    wrapSelectedText('*')
-end)
-
-markdownMode:bindWithAutomaticExit('s', function()
-    wrapSelectedText('~~')
-end)
-
+-- 链接
 markdownMode:bindWithAutomaticExit('l', function()
     inlineLink()
 end)
 
+-- 加粗
+markdownMode:bindWithAutomaticExit('b', function()
+    wrapSelectedText('**')
+end)
+markdownMode:bindWithAutomaticExit('b', function()
+    wrapSelectedText('**', false)
+end, {'shift'})
+
+-- 斜体
+markdownMode:bindWithAutomaticExit('i', function()
+    wrapSelectedText('*')
+end)
+markdownMode:bindWithAutomaticExit('i', function()
+    wrapSelectedText('*', false)
+end, {'shift'})
+
+-- 删除线
+markdownMode:bindWithAutomaticExit('s', function()
+    wrapSelectedText('~~')
+end)
+markdownMode:bindWithAutomaticExit('s', function()
+    wrapSelectedText('~~', false)
+end, {'shift'})
+
+-- 代码
 markdownMode:bindWithAutomaticExit('c', function()
     wrapSelectedText('`')
 end)
+markdownMode:bindWithAutomaticExit('c', function()
+    wrapSelectedText('`', false)
+end, {'shift'})
 
+-- 高亮
 markdownMode:bindWithAutomaticExit('h', function()
     wrapSelectedText('==')
 end)
+markdownMode:bindWithAutomaticExit('h', function()
+    wrapSelectedText('==', false)
+end, {'shift'})
 
+-- 标题
 for i = 1, 6, 1 do
     markdownMode:bindWithAutomaticExit(tostring(i), function()
         createHeading(i)
