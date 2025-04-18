@@ -1,8 +1,11 @@
 -- * code from: https://github.com/jasonrudolph/keyboard/blob/main/hammerspoon/markdown.lua
-function delayKeyUpDownLeftArrow(triggerCount)
+function delayKeyUpDownLeftArrow(triggerCount, key)
+    if key == nil then
+        key = 'left'
+    end
     hs.timer.doAfter(0.01, function()
         for i = triggerCount, 1, -1 do
-            keyUpDown('', 'left')
+            keyUpDown('', key)
         end
     end)
 end
@@ -92,6 +95,13 @@ function inlineLink()
     end
 end
 
+function createCodeBlock(backtickCount)
+    local backticks = string.rep('`', backtickCount)
+    inputContent(backticks .. 'md\n\n' .. backticks)
+    delayKeyUpDownLeftArrow(backtickCount)
+    delayKeyUpDownLeftArrow(1, 'up')
+end
+
 --------------------------------------------------------------------------------
 -- Define Markdown Mode
 --
@@ -106,6 +116,7 @@ end
 --   h => wrap the selected text in double equal sign ("h" for "hightlight")
 --   b => wrap the selected text in double asterisks ("b" for "bold")
 --   c => wrap the selected text in backticks ("c" for "code")
+--   k => create a code block
 --   i => wrap the selected text in single asterisks ("i" for "italic")
 --   s => wrap the selected text in double tildes ("s" for "strikethrough")
 --   l => convert the currently-selected text to an inline link, using a URL from the clipboard ("l" for "link")
@@ -202,6 +213,14 @@ for i = 1, 6, 1 do
         createHeading(i)
     end)
 end
+
+-- 代码块
+markdownMode:bindWithAutomaticExit('k', function()
+    createCodeBlock(3)
+end)
+markdownMode:bindWithAutomaticExit('k', function()
+    createCodeBlock(4)
+end, {'shift'})
 
 -- Use Control+m to toggle Markdown Mode
 hs.hotkey.bind({'ctrl'}, 'm', function()
